@@ -108,44 +108,16 @@ function addDepartment() {
       message: question,
     })
     .then((data) => {
-      departments.createDepartment(data.departments);
-      showOptions();
+      db.query(
+        "INSERT INTO departments (dept_name) VALUES (?)",
+        [data.department],
+        function (err, res) {
+          if (err) console.log(err);
+          showOptions();
+        }
+      );
     });
 }
-
-// function addEmployee() {
-//   db.query("SELECT * FROM employees", function (err, results) {
-//     const choices = results.map(({ id, first_name, last_name }) => {
-//       return {
-//         name: `${first_name} ${last_name}`,
-//         value: id,
-//       };
-//     });
-
-//     inquirer
-//       .prompt([
-//         {
-//           type: "list",
-//           name: "employeeId",
-//           message: "Which employee would you like to remove?",
-//           choices: choices,
-//         },
-//       ])
-//       .then(({ employeeId }) => {
-//         db.query(
-//           `INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)`,
-//           employeeId,
-//           (err, result) => {
-//             if (err) {
-//               console.log(err);
-//             }
-//             console.log(result);
-//             showOptions();
-//           }
-//         );
-//       });
-//   });
-// }
 
 function deleteEmployee() {
   db.query("SELECT * FROM employees", function (err, results) {
