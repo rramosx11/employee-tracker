@@ -41,6 +41,9 @@ function showOptions() {
         case "Add A Department":
           addDepartment();
           break;
+        case "Add A Role":
+          addRole();
+          break;
         case "Add An Employee":
           addEmployee();
           break;
@@ -116,6 +119,63 @@ function addDepartment() {
           showOptions();
         }
       );
+    });
+}
+
+function addRole() {
+  let departments =
+    //   // first get the list of departments
+    db.query("SELECT * FROM departments", function (err, res) {
+      if (err) console.log(err);
+      for (let i = 0; i < res.length; i++) {
+        if (res[i].name) {
+          departments.push(res[i].name);
+        }
+      }
+
+      // get the role details
+      let questions = [
+        "What is the name of the role?",
+        "What is the salary of the role?",
+        "Which department does the role belong to?",
+      ];
+      inquirer
+        .prompt([
+          {
+            name: "title",
+            type: "input",
+            message: questions[0],
+          },
+          {
+            name: "salary",
+            type: "number",
+            message: questions[1],
+          },
+          {
+            name: "department",
+            type: "list",
+            message: questions[2],
+            choices: departments,
+          },
+        ])
+        .then((data) => {
+          // get the department to tie to
+          let departmentId = null;
+          for (let i = 0; i < res.length; i++) {
+            if (res[i].name === data.department) {
+              departmentId = res[i].id;
+              break;
+            }
+            db.query(
+              "INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)",
+              [data.departments],
+              function (err, res) {
+                if (err) console.log(err);
+                showOptions();
+              }
+            );
+          }
+        });
     });
 }
 
