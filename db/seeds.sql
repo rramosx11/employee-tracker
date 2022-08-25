@@ -6,9 +6,9 @@ VALUES
 
 INSERT INTO roles (title, salary, department_id)
 VALUES 
-('Recruiter', 45000, 1),
+('HR Manager', 78000, 1),
 ('Employee Benefits', 47000, 1),
-('Training', 55000, 1),
+('Training & Recruiting', 60000, 1),
 ('CFO', 200000, 2),
 ('Junior Accountant', 40000, 2),
 ('Senior Accountant', 100000, 2),
@@ -19,4 +19,10 @@ VALUES
 INSERT INTO employees (first_name, last_name, role_id, manager_id)
 VALUES
 ('Scott', 'McAnally', 9, NULL),
-('Rodolfo', 'Ramos', 7, 1);
+('Rodolfo', 'Ramos', 7, 1),
+('Maria', 'Grano-Llanes', 4, NULL),
+('Cristiano', 'Ronaldo', 5, 3),
+('Neymar', 'Da Silva', 6, 3),
+('Javier', 'Ramos', 3, 1),
+('Maria', 'Ramos', 7, 1),
+('Esmeralda', 'Flores', 1, NULL);

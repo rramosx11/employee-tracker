@@ -46,6 +46,51 @@ function showOptions() {
     });
 }
 
+// Query database
+
+function showDepartments() {
+  console.log("show departments");
+  db.query(
+    "SELECT departments.id, departments.dept_name " + "FROM departments ",
+    function (err, results) {
+      if (err) throw err;
+      console.log("\n");
+      console.table(results);
+    }
+  );
+  showOptions();
+}
+
+function showRoles() {
+  console.log("show roles");
+  db.query(
+    "SELECT roles.id, roles.title, roles.salary, departments.dept_name " +
+      "FROM roles " +
+      "LEFT JOIN departments ON roles.department_id = departments.id",
+    function (err, results) {
+      if (err) throw err;
+      console.log("\n");
+      console.table(results);
+    }
+  );
+  showOptions();
+}
+function showEmployees() {
+  console.log("show employees");
+  db.query(
+    "SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.dept_name, roles.salary, manager.first_name AS manager_first_name, manager.last_name AS manager_last_name " +
+      "FROM employees " +
+      "LEFT JOIN roles ON employees.role_id = roles.id " +
+      "LEFT JOIN departments ON roles.department_id = departments.id " +
+      "LEFT JOIN employees manager ON employees.manager_id = manager.id ",
+    function (err, results) {
+      if (err) throw err;
+      console.log("\n");
+      console.table(results);
+    }
+  );
+  showOptions();
+}
 function addDepartment() {
   let question = "What department would you like to add?";
 
@@ -58,37 +103,6 @@ function addDepartment() {
     .then((data) => {
       addDepartment.inser;
     });
-}
-
-// Query database
-
-function showDepartments() {
-  console.log("show departments");
-  db.query("SELECT * FROM departments", function (err, results) {
-    if (err) throw err;
-    console.log("\n");
-    console.table(results);
-  });
-  showOptions();
-}
-
-function showRoles() {
-  console.log("show roles");
-  db.query("SELECT * FROM roles", function (err, results) {
-    if (err) throw err;
-    console.log("\n");
-    console.table(results);
-  });
-  showOptions();
-}
-function showEmployees() {
-  console.log("show employees");
-  db.query("SELECT * FROM employees", function (err, results) {
-    if (err) throw err;
-    console.log("\n");
-    console.table(results);
-  });
-  showOptions();
 }
 
 // function addEmployee() {
