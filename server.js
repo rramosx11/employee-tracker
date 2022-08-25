@@ -3,6 +3,10 @@ const db = require("./db/connection");
 require("console.table");
 // const apiRoutes = require("./routes/apiRoutes");
 
+// Global Variables
+// let employee = new Employee(DB);
+// let role = new Role(DB);
+
 function showOptions() {
   inquirer
     .prompt([
@@ -33,6 +37,9 @@ function showOptions() {
           break;
         case "View All Employees":
           showEmployees();
+          break;
+        case "Add A Department":
+          addDepartment();
           break;
         case "Add An Employee":
           addEmployee();
@@ -101,7 +108,8 @@ function addDepartment() {
       message: question,
     })
     .then((data) => {
-      addDepartment.inser;
+      departments.createDepartment(data.departments);
+      showOptions();
     });
 }
 
