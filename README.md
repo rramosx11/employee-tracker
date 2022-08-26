@@ -30,7 +30,7 @@ To use this project, do the following:
 - In the project terminal run "node server.js" or "node server".
 - Follow the prompts.
 
-![Demo-Download](https://github.com/rramosx11/TP-Generator/blob/main/assets/Team%20Profile%20Generator.mp4)
+![Demo-Download](https://github.com/rramosx11/employee-tracker/blob/main/assets/Employee%20Tracker.mp4)
 
 [Demo-YouTube-Link](https://www.youtube.com/watch?v=scTzatKkbIw)
 
