@@ -32,7 +32,7 @@ To use this project, do the following:
 
 ![Demo-Download](https://github.com/rramosx11/TP-Generator/blob/main/assets/Team%20Profile%20Generator.mp4)
 
-[Demo-YouTube-Link](https://youtu.be/TVysZT6kUx8)
+[Demo-YouTube-Link](https://www.youtube.com/watch?v=scTzatKkbIw)
 
 ## [Contributing](#table-of-contents)
 
