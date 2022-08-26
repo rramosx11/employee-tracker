@@ -3,10 +3,6 @@ const db = require("./db/connection");
 require("console.table");
 // const apiRoutes = require("./routes/apiRoutes");
 
-// Global Variables
-// let employee = new Employee(DB);
-// let role = new Role(DB);
-
 function showOptions() {
   inquirer
     .prompt([
@@ -47,6 +43,9 @@ function showOptions() {
         case "Add An Employee":
           addEmployee();
           break;
+        case "Update An Employee":
+          updateEmployee();
+          break;
         case "Remove Employee":
           deleteEmployee();
           break;
@@ -66,9 +65,9 @@ function showDepartments() {
       if (err) throw err;
       console.log("\n");
       console.table(results);
+      showOptions();
     }
   );
-  showOptions();
 }
 
 function showRoles() {
@@ -81,9 +80,9 @@ function showRoles() {
       if (err) throw err;
       console.log("\n");
       console.table(results);
+      showOptions();
     }
   );
-  showOptions();
 }
 function showEmployees() {
   console.log("show employees");
@@ -97,9 +96,9 @@ function showEmployees() {
       if (err) throw err;
       console.log("\n");
       console.table(results);
+      showOptions();
     }
   );
-  showOptions();
 }
 function addDepartment() {
   let question = "What department would you like to add?";
@@ -123,60 +122,158 @@ function addDepartment() {
 }
 
 function addRole() {
-  let departments =
-    //   // first get the list of departments
-    db.query("SELECT * FROM departments", function (err, res) {
-      if (err) console.log(err);
-      for (let i = 0; i < res.length; i++) {
-        if (res[i].name) {
-          departments.push(res[i].name);
-        }
-      }
+  db.query("SELECT * FROM departments", function (err, results) {
+    const aDepartments = results.map(({ id, dept_name }) => {
+      return {
+        name: `${dept_name}`,
+        value: id,
+      };
+    });
 
-      // get the role details
-      let questions = [
-        "What is the name of the role?",
-        "What is the salary of the role?",
-        "Which department does the role belong to?",
-      ];
+    inquirer
+      .prompt([
+        {
+          name: "title",
+          type: "input",
+          message: "What is the name of the role?",
+        },
+        {
+          name: "salary",
+          type: "input",
+          message: "What is the salary of the role?",
+        },
+        {
+          name: "department",
+          type: "list",
+          message: "Which department does the role belong to?",
+          choices: aDepartments,
+        },
+      ])
+      .then((data) => {
+        console.log(data);
+        db.query(
+          "INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)",
+          [data.title, data.salary, data.department],
+          function (err, res) {
+            if (err) console.log(err);
+            showOptions();
+          }
+        );
+      });
+  });
+}
+
+function addEmployee() {
+  db.query("SELECT * FROM roles", function (err, results) {
+    const aRoles = results.map(({ id, title, salary, department_ID }) => {
+      return {
+        name: `${title}`,
+        value: id,
+      };
+    });
+    db.query("SELECT * FROM employees", function (err, results) {
+      const aManagers = results.filter(
+        ({ first_name, last_name, id, manager_id }) => {
+          if (manager_id === null) {
+            return {
+              name: `${first_name} ${last_name}`,
+              value: id,
+            };
+          }
+        }
+      );
+      const managers = aManagers.map(({ id, first_name, last_name }) => {
+        return {
+          name: `${first_name} ${last_name}`,
+          value: id,
+        };
+      });
+
       inquirer
         .prompt([
           {
-            name: "title",
+            name: "first_name",
             type: "input",
-            message: questions[0],
+            message: "What is the employee's first name?",
           },
           {
-            name: "salary",
-            type: "number",
-            message: questions[1],
+            name: "last_name",
+            type: "input",
+            message: "What is the employee's last name?",
           },
           {
-            name: "department",
+            name: "role",
             type: "list",
-            message: questions[2],
-            choices: departments,
+            message: "What is the employee's role?",
+            choices: aRoles,
+          },
+          {
+            name: "manager",
+            type: "list",
+            message: "Who is the employee's manager?",
+            choices: managers,
           },
         ])
         .then((data) => {
-          // get the department to tie to
-          let departmentId = null;
-          for (let i = 0; i < res.length; i++) {
-            if (res[i].name === data.department) {
-              departmentId = res[i].id;
-              break;
+          console.log(data);
+          db.query(
+            "INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)",
+            [data.first_name, data.last_name, data.role, data.manager],
+            function (err, res) {
+              if (err) console.log(err);
+              showOptions();
             }
-            db.query(
-              "INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)",
-              [data.departments],
-              function (err, res) {
-                if (err) console.log(err);
-                showOptions();
-              }
-            );
-          }
+          );
         });
     });
+  });
+}
+
+function updateEmployee() {
+  db.query("SELECT * FROM employees", function (err, results) {
+    const aEmployees = results.map(({ id, first_name, last_name }) => {
+      return {
+        name: `${first_name} ${last_name}`,
+        value: id,
+      };
+    });
+
+    db.query("SELECT * FROM roles", function (err, results) {
+      const aRoles = results.map(({ id, title, salary, department_ID }) => {
+        return {
+          name: `${title}`,
+          value: id,
+        };
+      });
+
+      inquirer
+        .prompt([
+          {
+            name: "employee",
+            type: "list",
+            message: "Which employees role would you like to update?",
+            choices: aEmployees,
+          },
+          {
+            name: "role",
+            type: "list",
+            message: "Which role do you want to assign the selected employee?",
+            choices: aRoles,
+          },
+        ])
+        .then((data) => {
+          console.log(data);
+          db.query(
+            "UPDATE employees SET role_id = ? WHERE id = ?",
+            [data.role, data.employee],
+            function (err, res) {
+              if (err) console.log(err);
+              showOptions();
+            }
+          );
+        });
+    });
+  });
 }
 
 function deleteEmployee() {
